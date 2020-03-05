@@ -1,6 +1,8 @@
 /* --------------------------------------------------------------------------------
 #
-#
+#   Test functions from AMOSA
+#   Sean Wu (slwu89@berkeley.edu)
+#   March 2020
 #
 -------------------------------------------------------------------------------- */
 
@@ -8,6 +10,7 @@
 #include <Rinternals.h>
 #include <Rdefines.h>
 
+// testing calling the R function from C
 SEXP call_DTLZ1_from_c(SEXP sR, SEXP rho){
   SEXP R_fun, sym_fun, out;
   PROTECT(sym_fun = install("DTLZ1"));
