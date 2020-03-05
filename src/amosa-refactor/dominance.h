@@ -1,4 +1,4 @@
-#include <malloc.h>
+#include <stdlib.h>
 
 #include "amosa.h"
 /* The Following function checks whether the solution 

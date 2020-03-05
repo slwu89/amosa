@@ -14,7 +14,7 @@ Here "Single Linkage Clustering" mechanism is used.
 
 ///---------------C compiler's predefined header files---------------------------------------
 
-#include <malloc.h>
+#include <stdlib.h>
 #include <time.h>
 #include <math.h>
 

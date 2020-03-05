@@ -1,6 +1,6 @@
 // Declaring User Defined Header Files.
 
-#include <malloc.h>
+#include <stdlib.h>
 
 #include "amosa.h"
 

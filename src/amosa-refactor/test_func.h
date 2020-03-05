@@ -1,5 +1,5 @@
 #include <math.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include "amosa.h"
 
 void DTLZ1(double *s, AMOSAType *amosaParams)

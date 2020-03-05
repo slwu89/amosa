@@ -1,7 +1,7 @@
 //Declaring Pre Defined Header Files Of C Compiler.
 #include <math.h>
 #include <stdlib.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 #include "amosa.h"
 

@@ -33,7 +33,7 @@ Step 1: Open  terminal
 //--------------------------------------------------------------------------------------------------------------------------------------------
 
 ///-----------------------C compiler's perdefined header files--------------------------
-#include <malloc.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include "amosa.h"
