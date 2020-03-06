@@ -24,3 +24,6 @@ Contains **C** source code for the *AMOSA* algorithm.
     *	`double* d_min_real_var`:	Store minimum value of the real variables
     *	`double* d_max_real_var`:	Store maximum value of the real variables
   * `amosa-evaluate.h`: the generic form of evaluate which is seen by the rest of the program.
+  * `amosa-mutate.h`: mutates a solution
+  * `amosa-initsoln.h`: initializes the soft limit number of random initial "solutions"
+  * `amosa-initarchive.h`: initializes the archive

@@ -20,8 +20,8 @@ void initialize_sol(AMOSAType* amosa){
   int i_count;
   double *d_xnew;
   double *d_area1,*d_area2;
-  d_area1 = (double *)malloc(amosa->i_no_offunc*sizeof(double));
-  d_area2 = (double *)malloc(amosa->i_no_offunc*sizeof(double));
+  d_area1 = (double*)malloc(amosa->i_no_offunc*sizeof(double));
+  d_area2 = (double*)malloc(amosa->i_no_offunc*sizeof(double));
 
   /* Randomly initializing softl number of solutions */
   for(i=0; i<amosa->i_softl; i++){
@@ -30,7 +30,7 @@ void initialize_sol(AMOSAType* amosa){
     }
   }
 
-  d_xnew = (double *)malloc(amosa->i_totalno_var*sizeof(double));
+  d_xnew = (double*)malloc(amosa->i_totalno_var*sizeof(double));
 
   /* Performing some hill-climbing operation on solutions of the archive */
   for(ii=0; ii<amosa->i_softl; ii++){
@@ -49,7 +49,7 @@ void initialize_sol(AMOSAType* amosa){
 
       /* Function performing mutation on individual string */
       real_mutate_ind(d_xnew, amosa);
-      
+
       /* This function calls different evaluation functions */
       evaluate(d_xnew, amosa);
 
@@ -76,4 +76,5 @@ void initialize_sol(AMOSAType* amosa){
   // free memory
   free(d_area1);
   free(d_area2);
+  free(d_xnew);
 };

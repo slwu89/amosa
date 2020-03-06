@@ -19,7 +19,7 @@ void creating_archive(AMOSAType *amosaParams)
 //--------------------------------------------------------------------------------------------------------
 
 
-// Body of the creating_archive function	
+// Body of the creating_archive function
 
 //---------------------------------------------------------------------------------------------------------
   i_flag=(int *)malloc(amosaParams->i_softl*sizeof(int));
@@ -33,7 +33,7 @@ void creating_archive(AMOSAType *amosaParams)
     for(j=0;j<amosaParams->i_no_offunc;j++)
      d_area[i][j]=amosaParams->d_eval[j];
    i_flag[i]=1;
- }   
+ }
 
  for(j=0;j<amosaParams->i_softl-1;j++)
  {
@@ -47,7 +47,7 @@ void creating_archive(AMOSAType *amosaParams)
       count1=0;
       for(h=0;h<amosaParams->i_no_offunc;h++)
       {
-        if(d_area[j][h]>=d_area[i][h]) 
+        if(d_area[j][h]>=d_area[i][h])
          count++;
 
        else if(d_area[j][h]<=d_area[i][h])
@@ -77,7 +77,7 @@ void creating_archive(AMOSAType *amosaParams)
               }  //end of inner if loop
         }  //end of outer for loop
 
-        amosaParams->i_archivesize=g;  
+        amosaParams->i_archivesize=g;
       }
 //------------------------------------------------------------------------------------------------------------------------
     // End of creating_archive function
