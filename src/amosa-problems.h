@@ -57,8 +57,11 @@ typedef struct AMOSAType
 // initializes an amosa type
 void init_AMOSAType_DTLZ1(AMOSAType* amosa);
 
+// frees the memory
+void free_AMOSAType_DTLZ1(AMOSAType* amosa);
+
 // evaluates the type at a point in paramter space
-void evaluate_DTLZ1(double* s, AMOSAType* amosa, SEXP rho);
+void evaluate_DTLZ1(double* s, AMOSAType* amosa);
 
 
 # endif

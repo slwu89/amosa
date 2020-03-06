@@ -41,5 +41,5 @@ DTLZ1 <- function(s){
 #' @useDynLib amosa call_DTLZ1_from_c
 #' @export
 DTLZ1_fromC <- function(s){
-  .Call(call_DTLZ1_from_c,as.numeric(s),new.env())
+  .Call(call_DTLZ1_from_c,as.numeric(s))
 }

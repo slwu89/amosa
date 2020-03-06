@@ -22,7 +22,7 @@
 #   Main interface function
 -------------------------------------------------------------------------------- */
 
-void evaluate(double* s, AMOSAType* amosa, SEXP rho);
+void evaluate(double* s, AMOSAType* amosa);
 
 
 #endif
