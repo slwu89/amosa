@@ -11,6 +11,7 @@
 
 #include "amosa-mutate.h"
 #include "amosa-evaluate.h"
+#include "amosa-cluster.h"
 #include "amosa-dominance.h"
 
 
@@ -52,10 +53,7 @@ void RunAMOSA(AMOSAType *amosa){
   double *func_current;
   double **area2;
 
-
-
-  // Main body of the mainprocess
-
+  // memory allocation
   p2 = amosa->i_softl+3;
   p1 = amosa->i_archivesize-1;
 
@@ -147,269 +145,218 @@ void RunAMOSA(AMOSAType *amosa){
       amount = find_unsign_dom(func_current,func_new, amosa);
 
       deldom = deldom + amount;
-      
-                    for(i=0;i<amosa->i_archivesize;i++)
-                    {
-                     count=1;
-                     if(flag==0 || i!=r)
-                     {
-                      isdom=is_dominated(amosa->d_func_archive[i],func_new, amosa);
 
-                      if(isdom==1)
-                      {
-                        count= count+1;
-                        amount=find_unsign_dom(amosa->d_func_archive[i],func_new, amosa);
-                        deldom=deldom+amount;
-                             }//End of inner if
-                          }//End of outer if
-                      }//End of for loop
-                     p=1.0/(1.0+exp(deldom/(t)));// The probability of Case 1
+      for(i=0;i<amosa->i_archivesize;i++){
+        count = 1;
+        if(flag==0 || i!=r){
+          isdom = is_dominated(amosa->d_func_archive[i],func_new, amosa);
 
-                     ran2=(rand()/(RAND_MAX+1.0));
+          if(isdom==1){
+            count = count + 1;
+            amount = find_unsign_dom(amosa->d_func_archive[i],func_new, amosa);
+            deldom = deldom + amount;
+          }
+        }
+      }
 
-                     if(p>=ran2)
-                     {
-                       for(f=0;f<amosa->i_totalno_var;f++)
-                         current[f]=newsol[f];
-                       for(h=0;h<amosa->i_no_offunc;h++)
-                         func_current[h]=func_new[h];
-                       flag=0;
-                        }//End of if
-                      }
+      // The probability of Case 1
+      p= 1./(1.+exp(deldom/(t)));
 
-// End of Case1
-//----------------------------------------------------------------------------------------------------------
+      ran2 = unif_rand();
 
+      if(p >= ran2){
+        for(f=0;f<amosa->i_totalno_var;f++){
+          current[f]=newsol[f];
+        }
+        for(h=0;h<amosa->i_no_offunc;h++){
+          func_current[h]=func_new[h];
+        }
+        flag = 0;
+      }
+      // End of Case1
+    } else if(count2==amosa->i_no_offunc) {
 
-          //Case 3: if new sol dominates the current solution
+      //Case 3: if new sol dominates the current solution
+      k=0;
+      count=0;
+      deldom=1000000;
 
-//------------------------------------------------------------------------------------------------------------------
+      if(amosa->verbose){
+        Rprintf(" *** new solution dominates current solution ***\n",j);
+      }
 
+      for(i=0;i<amosa->i_archivesize;i++){
+        isdom = is_dominated(amosa->d_func_archive[i],func_new, amosa);
+        if(isdom==1){
+          count=count+1;
+          amount=find_unsign_dom(amosa->d_func_archive[i],func_new, amosa);
+          if(amount<deldom){
+           deldom=amount;
+           k=i;
+          }
+        }
+      }
 
-                      else if(count2==amosa->i_no_offunc)
-                      {
-                        k=0;count=0;
-                        deldom=1000000;
-                        printf("\n New  sol dominates current sol");
+      // Case3(a):If new point is dominated by k(k>=1) solutions in the archive
+      if(count>0){
 
-                        for(i=0;i<amosa->i_archivesize;i++)
-                        {
-                          isdom=is_dominated(amosa->d_func_archive[i],func_new, amosa);
-                          if(isdom==1)
-                          {
-                            count=count+1;
-                            amount=find_unsign_dom(amosa->d_func_archive[i],func_new, amosa);
-                            if(amount<deldom)
-                            {
-                             deldom=amount;
-                             k=i;
-                            }//End of if
-                       }//End of outer if
-                    }//End of for loop
+        // The probability of case 3(a)
+        p=1.0/(1.0+exp(-deldom));
+        ran2 = unif_rand();
 
-// Case3(a):If new point is dominated by k(k>=1) solutions in the archive
+        //Case3(a)1:Set point of the archive corresponds to deldom as current point with probability=p
+        if(p>=ran2){
 
-//-------------------------------------------------------------------------------------------------------
-                    if(count>0)
-                    {
+          for(h=0;h<amosa->i_totalno_var;h++){
+            current[h]=amosa->d_archive[k][h];
+      		}
 
-                   	p=1.0/(1.0+exp(-deldom));// The probability of case 3(a)
+          for(h=0;h<amosa->i_no_offunc;h++){
+            func_current[h]=amosa->d_func_archive[k][h];
+       		}
 
-                   	ran2=(rand()/(RAND_MAX+1.0));
+          flag=1;
+          pos=k;
 
-//Case3(a)1:Set point of the archive corresponds to deldom as current point with probability=p
+          //End of case3(a)1:
+        } else {
+          //Case3(a)2: Set new point as current point
+          for(f=0;f<amosa->i_totalno_var;f++){
+            current[f]=newsol[f];
+          }
+          for(h=0;h<amosa->i_no_offunc;h++){
+            func_current[h]=func_new[h];
+          }
+          flag=0;
 
-//---------------------------------------------------------------------------------------------------------------
+          //End of case3(a)2:
+        }
 
-                   	if(p>=ran2)
-                   	{
+        //End of case3(a):
+      } else if(count==0 && duplicate==0){  /* no sol in archive dominates current*/
+        // Case3(b): New point is non-dominating with respect to the point in the archive
 
-                      for(h=0;h<amosa->i_totalno_var;h++)
-                      {
-                        current[h]=amosa->d_archive[k][h];
+         /* if current resides in archivehieve then remove that point */
+        if(flag==1){
 
-                      		}//End of for loop
-                          for(h=0;h<amosa->i_no_offunc;h++)
-                          {
-                           func_current[h]=amosa->d_func_archive[k][h];
-                     		}//End of for loop
-                     		flag=1;
-                     		pos=k;
-                       }
+          for(i=pos;i<amosa->i_archivesize-1;i++){
+            for(h=0;h<amosa->i_no_offunc;h++){
+              amosa->d_func_archive[i][h]=amosa->d_func_archive[i+1][h];
+            }
+            for(h=0;h<amosa->i_totalno_var;h++){
+              amosa->d_archive[i][h]=amosa->d_archive[i+1][h];
+            }
+          }
 
+          amosa->i_archivesize=amosa->i_archivesize-1;
+        }
 
-//End of case3(a)1:
-//----------------------------------------------------------------------------------------------------------
+        for(i=0;i<amosa->i_archivesize;i++){
+          for(h=0;h<amosa->i_no_offunc;h++){
+            area2[i][h]=amosa->d_func_archive[i][h];
+          }
+          for(h=0;h<amosa->i_totalno_var;h++){
+            archive1[i][h]=amosa->d_archive[i][h];
+          }
+        }
 
-//Case3(a)2: Set new point as current point
+        /* if newsol dominates some other sols in archivehieve then remove all those*/
+        k=0;
+        h=0;
 
+        for(i=0;i<amosa->i_archivesize;i++){
+          isdom=is_dominated(func_new,area2[i], amosa);
+          if(isdom==1){
+            k++;
+          } else {
 
-//-----------------------------------------------------------------------------------------------------------------
+            for(n=0;n<amosa->i_no_offunc;n++){
+              amosa->d_func_archive[h][n]=area2[i][n];
+            }
 
+            for(n=0;n<amosa->i_totalno_var;n++){
+              amosa->d_archive[h][n]=archive1[i][n];
+            }
+            h++;
+          }
+        }
 
-                       else
-                       {
-                         for(f=0;f<amosa->i_totalno_var;f++)
-                           current[f]=newsol[f];
-                         for(h=0;h<amosa->i_no_offunc;h++)
-                          func_current[h]=func_new[h];
-                        flag=0;
-                      }
+        if(k>0){
+          amosa->i_archivesize=h;
+        }
 
-//End of case3(a)2:
-//---------------------------------------------------------------------------------------------------------------
+        amosa->i_archivesize++;
 
-                    }
+        m = amosa->i_archivesize-1;
 
-//End of case3(a):
-//-----------------------------------------------------------------------------------------------------------------
+        for(l=0;l<amosa->i_totalno_var;l++){
+          amosa->d_archive[m][l]=newsol[l];
+        }
+        for(l=0;l<amosa->i_no_offunc;l++){
+          amosa->d_func_archive[m][l]=func_new[l];
+        }
 
-// Case3(b): New point is non-dominating with respect to the point in the archive
+        /* If archive size exceeds soft limit then clustering is needed*/
+        if(amosa->i_archivesize>amosa->i_softl){
+          clustering(amosa);
+        }
 
-//-----------------------------------------------------------------------------------------------------------------
+        for(f=0;f<amosa->i_totalno_var;f++){
+          current[f]=newsol[f];
+        }
 
-            else if(count==0 && duplicate==0)  /* no sol in archive dominates current*/
-                    {
+        for(f=0;f<amosa->i_no_offunc;f++){
+          func_current[f]=func_new[f];
+        }
 
-                 if(flag==1) /* if current resides in archivehieve then remove that point */
-                     {
-                       for(i=pos;i<amosa->i_archivesize-1;i++)
-                       {
-                        for(h=0;h<amosa->i_no_offunc;h++)
-                        {
-                         amosa->d_func_archive[i][h]=amosa->d_func_archive[i+1][h];
-                           }//End of inner for loop
-                           for(h=0;h<amosa->i_totalno_var;h++)
-                           {
-                            amosa->d_archive[i][h]=amosa->d_archive[i+1][h];
-                               }//End of second inner for loop
-                           }//End of outer for loop
-                           amosa->i_archivesize=amosa->i_archivesize-1;
-                       }//End of if
+        flag = 1;
+        pos = m;
+        // End of case3(b)
+      }
 
-                       for(i=0;i<amosa->i_archivesize;i++)
-                       {
-                         for(h=0;h<amosa->i_no_offunc;h++)
-                         {
-                          area2[i][h]=amosa->d_func_archive[i][h];
-                        }//End of inner for loop
-                        for(h=0;h<amosa->i_totalno_var;h++)
-                        {
-                         archive1[i][h]=amosa->d_archive[i][h];
-                          }//End of second inner for loop
+      //End of case3
+    } else {
+      //Case 2: Current point and new point are non-dominating to each-other
 
-                      }//End of outer for loop
-                   k=0;  /* if newsol dominates some other sols in archivehieve
-                         then remove all those*/
-                   h=0;
-                   for(i=0;i<amosa->i_archivesize;i++)
-                   {
-                     isdom=is_dominated(func_new,area2[i], amosa);
-                     if(isdom==1)
-                     {
-                       k++;
-                         }//End of if
-                         else
-                         {
+      if(amosa->verbose){
+        Rprintf(" *** current solution and new solution are nondominating to each other ***\n",j);
+      }
 
-                          for(n=0;n<amosa->i_no_offunc;n++)
-                            amosa->d_func_archive[h][n]=area2[i][n];
-                          for(n=0;n<amosa->i_totalno_var;n++)
-                          {
-                            amosa->d_archive[h][n]=archive1[i][n];
-                               }//End of for loop
-                               h++;
-                        }//End of else
-                     }//End of outer for loop
+      count=0;
+      deldom=0.0;
 
-                     if(k>0)
-                     {
-                       amosa->i_archivesize=h;
-                    }//End of if
+      for(i=0;i<amosa->i_archivesize;i++){
 
-                    amosa->i_archivesize++;
+        /* count total no of solution that dominates new sol*/
+        isdom=is_dominated(amosa->d_func_archive[i],func_new, amosa);
+        if(isdom==1){
+          count= count+1;
+          amount=find_unsign_dom(amosa->d_func_archive[i],func_new, amosa);
+          deldom=deldom+amount;
+        }
+      }
 
-                    m=amosa->i_archivesize-1;
-                    for(l=0;l<amosa->i_totalno_var;l++)
-                    {
-                     amosa->d_archive[m][l]=newsol[l];
-                     }//End of for loop
-                     for(l=0;l<amosa->i_no_offunc;l++)
-                     {
-                       amosa->d_func_archive[m][l]=func_new[l];
-                    }//End of for loop
+      //Case 2(a): New point is dominated by k(k>=1) point in the archive
+      if(count>0){
 
-                  if(amosa->i_archivesize>amosa->i_softl) /* If archive size exceeds soft limit then
-					   clustering is needed*/
-                    clustering(amosa);
+        // The probability of case 2(a)
+        p=1.0/(1.0+exp(deldom/(t)));
+        ran2=unif_rand();
 
-                  for(f=0;f<amosa->i_totalno_var;f++)
-                   current[f]=newsol[f];
-                 for(f=0;f<amosa->i_no_offunc;f++)
-                 {
-                   func_current[f]=func_new[f];
-                    }//End of for loop
-                    flag=1;
-                    pos=m;
-                  }
-
-// End of case3(b)
-//------------------------------------------------------------------------------------------------------------------------
-
-                }
-
-//End of case3
-//----------------------------------------------------------------------------------------------------------------
-
-//Case 2: Current point and new point are non-dominating to each-other
-
-//-----------------------------------------------------------------------------------------------------------------------------------
-
-                else
-                {
-#ifdef DEBUG
-                 printf("\n\n Current sol and new sol are nondominating to each other ");
-#endif
-                 count=0; deldom=0.0;
-
-                 for(i=0;i<amosa->i_archivesize;i++)
-                 {
-                    /* count total no of solution that dominates new sol*/
-                  isdom=is_dominated(amosa->d_func_archive[i],func_new, amosa);
-                  if(isdom==1)
-                  {
-                   count= count+1;
-                   amount=find_unsign_dom(amosa->d_func_archive[i],func_new, amosa);
-                   deldom=deldom+amount;
-                        }// End of if
-                    }// End of for loop
+        if(p>=ran2){
+          for(f=0;f<amosa->i_totalno_var;f++){
+            current[f]=newsol[f];
+          }
+          for(f=0;f<amosa->i_no_offunc;f++){
+            func_current[f]=func_new[f];
+          }
+          flag=0;
+        }
+        // End of case 2(a):
+      }
 
 
-//---------------------------------------------------------------------------------------------------------------------------------------
 
-//Case 2(a): New point is dominated by k(k>=1) point in the archive
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-                    if(count>0)
-                    {
-                      p=1.0/(1.0+exp(deldom/(t)));// The probability of case 2(a)
-                      ran2=(rand()/(RAND_MAX+1.0));
-                      printf("\n p=%lf",p);
-                      if(p>=ran2)
-                      {
-                        for(f=0;f<amosa->i_totalno_var;f++)
-                         current[f]=newsol[f];
-                       for(f=0;f<amosa->i_no_offunc;f++)
-                       {
-                        func_current[f]=func_new[f];
-                             }// End of for loop
-                             flag=0;
-                          }// End of if
-                        }
-
-
-// End of case 2(a):
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 

@@ -15,7 +15,7 @@
 #   The function clustering clusters by "Single Linkage Clustering" mechanism
 -------------------------------------------------------------------------------- */
 
-void clustering(double* s, AMOSAType* amosa){
+void clustering(AMOSAType* amosa){
 
   // local variables
   int    i;
