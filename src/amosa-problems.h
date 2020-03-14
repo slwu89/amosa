@@ -35,6 +35,8 @@ typedef struct AMOSAType
 	int i_archivesize;			/* Stores the archive size */
 	int i_no_offunc;			/* Number of function */
 
+	int verbose;
+
 	double d_tmax;				/* maximum temperature */
 	double d_tmin;				/* minimum temperature */
 	double d_alpha;				/* cooling rate */
@@ -53,7 +55,7 @@ typedef struct AMOSAType
 -------------------------------------------------------------------------------- */
 
 // initializes an amosa type
-void init_AMOSAType_DTLZ1(AMOSAType* amosa);
+void init_AMOSAType_DTLZ1(AMOSAType* amosa, const int verbose);
 
 // frees the memory
 void free_AMOSAType_DTLZ1(AMOSAType* amosa);

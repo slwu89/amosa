@@ -14,7 +14,7 @@
 -------------------------------------------------------------------------------- */
 
 // initializes an amosa type
-void init_AMOSAType_DTLZ1(AMOSAType* amosa){
+void init_AMOSAType_DTLZ1(AMOSAType* amosa, const int verbose){
 
 	amosa->i_hardl = 40;
 	amosa->i_softl = 20;
@@ -23,6 +23,12 @@ void init_AMOSAType_DTLZ1(AMOSAType* amosa){
 	amosa->i_totalno_var = 7;
 	amosa->i_archivesize = 0;
 	amosa->i_no_offunc = 3;
+
+	if(verbose > 1 || verbose < 0){
+		error("verbose must be an int (boolean)");
+	}
+
+	amosa->verbose = verbose;
 
 	amosa->d_tmax = 200.;
 	amosa->d_tmin = 1E-7;
