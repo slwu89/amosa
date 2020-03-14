@@ -13,7 +13,6 @@
 void real_mutate_ind(double* s, AMOSAType* amosa){
 
   // local variables
-  int i, j;
   int i_count;
   int i_rnd1;
   double d_rnd;

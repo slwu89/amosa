@@ -35,8 +35,6 @@ typedef struct AMOSAType
 	int i_archivesize;			/* Stores the archive size */
 	int i_no_offunc;			/* Number of function */
 
-	char c_problem[50];			/* function name to be optimized */
-
 	double d_tmax;				/* maximum temperature */
 	double d_tmin;				/* minimum temperature */
 	double d_alpha;				/* cooling rate */

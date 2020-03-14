@@ -24,8 +24,6 @@ void init_AMOSAType_DTLZ1(AMOSAType* amosa){
 	amosa->i_archivesize = 0;
 	amosa->i_no_offunc = 3;
 
-	strncpy(amosa->c_problem, "DTLZ1", 50);
-
 	amosa->d_tmax = 200.;
 	amosa->d_tmin = 1E-7;
 	amosa->d_alpha = 0.8;
@@ -93,7 +91,7 @@ void evaluate_DTLZ1(double* s, AMOSAType* amosa){
 
   // s_sexp <- s
   SEXP s_sexp = PROTECT(Rf_allocVector(REALSXP,amosa->i_totalno_var));
-  memcpy(REAL(s_sexp),s,sizeof(double)*amosa->i_totalno_var);
+  memmove(REAL(s_sexp),s,sizeof(double)*amosa->i_totalno_var);
 
   SEXP R_fun, sym_fun, out;
   PROTECT(sym_fun = install("DTLZ1"));
@@ -101,6 +99,6 @@ void evaluate_DTLZ1(double* s, AMOSAType* amosa){
   PROTECT(out = Rf_eval(R_fun,R_GlobalEnv));
 
   // amosa->d_eval <- out
-  memcpy(amosa->d_eval,REAL(out),amosa->i_no_offunc*sizeof(double));
+  memmove(amosa->d_eval,REAL(out),amosa->i_no_offunc*sizeof(double));
   UNPROTECT(4);
 };

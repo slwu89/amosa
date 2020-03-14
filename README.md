@@ -27,3 +27,9 @@ Contains **C** source code for the *AMOSA* algorithm.
   * `amosa-mutate.h`: mutates a solution
   * `amosa-initsoln.h`: initializes the soft limit number of random initial "solutions"
   * `amosa-initarchive.h`: initializes the archive
+
+Still need to work on:
+  * burn_in_period.h
+  * dominance.h
+  * main_process.h
+  * amosa_real.c
