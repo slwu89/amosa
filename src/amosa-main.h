@@ -1,19 +1,28 @@
 /* --------------------------------------------------------------------------------
 #
-#   generic interface to evaluate various multi-objective problems
+#   The R interface
 #   Sean Wu (slwu89@berkeley.edu)
 #   March 2020
 #
 -------------------------------------------------------------------------------- */
 
-#include "amosa-evaluate.h"
-#include "amosa-problems.h"
+#ifndef AMOSA_MAIN
+#define AMOSA_MAIN
+
+#include <stdlib.h>
+#include <time.h>
+
+#include <R.h>
+#include <Rinternals.h>
+#include <Rdefines.h>
+
+#include <Rmath.h>
 
 
 /* --------------------------------------------------------------------------------
-#   Main interface function
+#   run amosa
 -------------------------------------------------------------------------------- */
 
-void evaluate(double* s, AMOSAType* amosa){
-  evaluate_DTLZ1(s,amosa);
-};
+SEXP AMOSA_C(SEXP verboseR);
+
+#endif

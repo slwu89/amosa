@@ -17,7 +17,7 @@
 void init_AMOSAType_DTLZ1(AMOSAType* amosa, const int verbose){
 
 	amosa->i_hardl = 40;
-	amosa->i_softl = 20;
+	amosa->i_softl = 30;
 	amosa->i_no_ofiter = 500;
 	amosa->i_hillclimb_no = 20;
 	amosa->i_totalno_var = 7;

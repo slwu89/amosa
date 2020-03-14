@@ -29,7 +29,7 @@ Contains **C** source code for the *AMOSA* algorithm.
   * `amosa-initarchive.h`: initializes the archive
   * `amosa-burnih.h`: burns in the maximum temperature for simulated annealing
   * `amosa-dominance.h`: checks if one solution dominates another
+  * `amosa-algorithm.h`: the main AMOSA algorithm
 
 Still need to work on:
-  * main_process.h
   * amosa_real.c
