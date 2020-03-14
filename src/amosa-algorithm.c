@@ -39,7 +39,7 @@ void RunAMOSA(AMOSAType *amosa){
   double p;
   double deldom;
   double amount;
-  float  ran1;
+  // float  ran1;
   int    count;
   int    duplicate;
   int    count1;
@@ -353,125 +353,98 @@ void RunAMOSA(AMOSAType *amosa){
           flag=0;
         }
         // End of case 2(a):
+      } else if(count==0 ){
+
+        // Case 2(b):New point is non-dominating with respect to all the points in the archive
+
+        for(i=0;i<amosa->i_archivesize;i++){
+          for(h=0;h<amosa->i_no_offunc;h++){
+            area2[i][h]=amosa->d_func_archive[i][h];
+          }
+          for(h=0;h<amosa->i_totalno_var;h++){
+            archive1[i][h]=amosa->d_archive[i][h];
+          }
+        }
+
+        k=0;
+        h=0;
+
+        for(i=0;i<amosa->i_archivesize;i++){
+          isdom=is_dominated(func_new,area2[i], amosa);
+          if(isdom==1){
+            k++;
+          } else {
+            for(n=0;n<amosa->i_no_offunc;n++){
+              amosa->d_func_archive[h][n]=area2[i][n];
+            }
+            for(n=0;n<amosa->i_totalno_var;n++){
+              amosa->d_archive[h][n]=archive1[i][n];
+            }
+            h++;
+          }
+        }
+
+        if(k>0){
+          amosa->i_archivesize=h;
+        }
+
+        amosa->i_archivesize++;
+        m=amosa->i_archivesize-1;
+
+        for(l=0;l<amosa->i_totalno_var;l++){
+          amosa->d_archive[m][l]=newsol[l];
+        }
+        for(l=0;l<amosa->i_no_offunc;l++){
+          amosa->d_func_archive[m][l]=func_new[l];
+        }
+
+        if(amosa->verbose){
+          Rprintf(" *** amosa->i_archivesize is: %d ***\n",amosa->i_archivesize);
+        }
+
+        // If amosa->i_archivesize increases from soft limit clustering is required
+        if(amosa->i_archivesize>amosa->i_softl){
+          clustering(amosa);
+          if(amosa->verbose){
+            Rprintf(" *** finish clustering, new archive size, amosa->i_archivesize is: %d ***\n",amosa->i_archivesize);
+          }
+        }
+
+        for(f=0;f<amosa->i_totalno_var;f++){
+          current[f]=newsol[f];
+        }
+        for(f=0;f<amosa->i_no_offunc;f++){
+          func_current[f]=func_new[f];
+        }
+
+        flag=1;
+        pos=m;
+        // End of case 2(b):
       }
+      // End of case 2:
+    }
 
-
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-// Case 2(b):New point is non-dominating with respect to all the points in the archive
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-                        else if(count==0 )
-                        {
-
-                         for(i=0;i<amosa->i_archivesize;i++)
-                         {
-                           for(h=0;h<amosa->i_no_offunc;h++)
-                             area2[i][h]=amosa->d_func_archive[i][h];
-                           for(h=0;h<amosa->i_totalno_var;h++)
-                           {
-                             archive1[i][h]=amosa->d_archive[i][h];
-
-                               }//End of inner for loop
-
-                           }//End of outer for loop
-
-                           k=0;
-                           h=0;
-                           for(i=0;i<amosa->i_archivesize;i++)
-                           {
-                            isdom=is_dominated(func_new,area2[i], amosa);
-                            if(isdom==1)
-                            {
-                             k++;
-                               }//End of if
-                               else
-                               {
-                                for(n=0;n<amosa->i_no_offunc;n++)
-                                  amosa->d_func_archive[h][n]=area2[i][n];
-                                for(n=0;n<amosa->i_totalno_var;n++)
-                                {
-                                 amosa->d_archive[h][n]=archive1[i][n];
-
-
-                                      }//End of inner for loop
-                                      h++;
-                                }//End of else
-                           }//End of outer for loop
-
-                           if(k>0)
-                           {
-                             amosa->i_archivesize=h;
-                           }//End of if
-
-                           amosa->i_archivesize++;
-
-                           m=amosa->i_archivesize-1;
-
-                           for(l=0;l<amosa->i_totalno_var;l++)
-                           {
-                            amosa->d_archive[m][l]=newsol[l];
-                            }//End of for loop
-                            for(l=0;l<amosa->i_no_offunc;l++)
-                            {
-                             amosa->d_func_archive[m][l]=func_new[l];
-                            }//End of for loop
-
-#ifdef DEBUG
-                            printf("\n amosa->i_archivesize=%d",amosa->i_archivesize);
-#endif
-
-
-                         if(amosa->i_archivesize>amosa->i_softl)// If amosa->i_archivesize increases from soft limit 							clustering is required
-                         {
-                          clustering(amosa);
-                            }//End of if
-#ifdef DEBUG
-                            printf("\n amosa->i_archivesize=%d",amosa->i_archivesize);
-#endif
-                            for(f=0;f<amosa->i_totalno_var;f++)
-                             current[f]=newsol[f];
-                           for(f=0;f<amosa->i_no_offunc;f++)
-                             func_current[f]=func_new[f];
-                           flag=1;
-                           pos=m;
-                         }
-
-
-
-// End of case 2(b):
-//-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-                       }
-
-
-// End of case 2:
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-                     }
-
-
-// End of for loop :for(i=0;i<amosa->i_no_ofiter;i++)
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-                   }
-
-
-// End of for loop :for(temp=amosa->d_tmax,;temp>amosa->d_tmin;temp*=amosa->d_alpha)
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Open the file to store the resulting point (i.e the parato optimal font)
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// End of mainprocess
-
+    // End of for loop :for(i=0;i<amosa->i_no_ofiter;i++)
   }
 
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  // End of for loop :for(temp=amosa->d_tmax,;temp>amosa->d_tmin;temp*=amosa->d_alpha)
+  }
+
+  // free memory
+  for(i=0;i<(p2);i++){
+    free(area2[i]);
+  }
+  free(area2);
+
+  for(i=0;i<(p2-1);i++){
+    free(archive1[i]);
+  }
+  free(archive1);
+
+  free(current);
+  free(newsol);
+
+  free(func_new);
+  free(func_current);
+
+}
