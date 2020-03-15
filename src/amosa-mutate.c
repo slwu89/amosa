@@ -22,12 +22,12 @@ void real_mutate_ind(double* s, AMOSAType* amosa){
   double d_rand_lap;
 
   // pick variable to mutate
-  d_rnd2 = floor(unif_rand() * amosa->i_totalno_var);
+  d_rnd2 = runif(0.,amosa->i_totalno_var);
   i_rnd1 = (int)d_rnd2;
   y = s[i_rnd1];
 
   b = 0.25;
-  d_rnd = unif_rand();
+  d_rnd = runif(0.,1.);
   d_rnd = d_rnd-0.5;
 
   if(d_rnd < 0.){
@@ -42,7 +42,7 @@ void real_mutate_ind(double* s, AMOSAType* amosa){
   while ((y<amosa->d_min_real_var[i_rnd1] || y>amosa->d_max_real_var[i_rnd1]) && (i_count<20)){
 
     y = s[i_rnd1];
-    d_rnd = unif_rand();
+    d_rnd = runif(0.,1.);
     d_rnd = d_rnd-0.5;
 
     if(d_rnd < 0.){

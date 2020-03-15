@@ -15,6 +15,8 @@
 #include <Rinternals.h>
 #include <Rdefines.h>
 
+#include <Rmath.h>
+
 #include "amosa-problems.h"
 
 

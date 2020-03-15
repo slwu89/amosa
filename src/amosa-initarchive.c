@@ -25,17 +25,21 @@ void creating_archive(AMOSAType* amosa){
   double** d_area;
 
   // alloc memory
-  i_flag = (int*)calloc(amosa->i_softl,sizeof(int));
+  i_flag = (int*)malloc(amosa->i_softl * sizeof(int));
+
   d_area = (double**)malloc(amosa->i_softl*sizeof(double*));
   for(i=0; i<amosa->i_softl; i++){
     d_area[i] = (double*)malloc(amosa->i_no_offunc*sizeof(double));
   }
 
   for(i=0; i<amosa->i_softl; i++){
+
     evaluate(amosa->d_solution[i],amosa);
+
     for(j=0; j<amosa->i_no_offunc; j++){
       d_area[i][j] = amosa->d_eval[j];
     }
+    
     i_flag[i] = 1;
   }
 
