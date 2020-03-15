@@ -67,8 +67,8 @@ void creating_archive(AMOSAType* amosa){
     }
   }
 
-
-  for(i=0; i<amosa->i_softl; i++){
+  // FIX: iterate to i_softl-1
+  for(i=0; i<amosa->i_softl-1; i++){
     if(i_flag[i] == 1){
 
       for(h=0; h<amosa->i_totalno_var; h++){

@@ -16,8 +16,8 @@
 // initializes an amosa type
 void init_AMOSAType_DTLZ1(AMOSAType* amosa, const int verbose){
 
-	amosa->i_hardl = 40;
-	amosa->i_softl = 30;
+	amosa->i_hardl = 80;
+	amosa->i_softl = 50;
 	amosa->i_no_ofiter = 500;
 	amosa->i_hillclimb_no = 20;
 	amosa->i_totalno_var = 7;
@@ -47,7 +47,7 @@ void init_AMOSAType_DTLZ1(AMOSAType* amosa, const int verbose){
 
 	amosa->d_func_archive = (double**)malloc((amosa->i_softl + 3) * sizeof(double*));	/* memory allocation for archive */
 	for(int i=0; i<(amosa->i_softl + 3); i++){
-		amosa->d_func_archive[i] = (double*)malloc(amosa->i_totalno_var * sizeof(double));
+		amosa->d_func_archive[i] = (double*)malloc(amosa->i_no_offunc * sizeof(double));
 	}
 
 	amosa->d_eval = (double*)malloc(amosa->i_no_offunc*sizeof(double));

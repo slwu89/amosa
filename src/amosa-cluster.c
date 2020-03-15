@@ -49,12 +49,12 @@ void clustering(AMOSAType* amosa){
   cluster = (int*)malloc((amosa->i_softl+1) * sizeof(int));
 
   archive2 = (double**)malloc((amosa->i_softl+2) * sizeof(double*));
-  for(i=0; i<amosa->i_softl+2; i++){
+  for(i=0; i<(amosa->i_softl+2); i++){
     archive2[i] = (double*)malloc(amosa->i_totalno_var * sizeof(double));
   }
 
-  area2 = (double**)malloc((amosa->i_no_offunc+2) * sizeof(double));
-  for(i=0; i<amosa->i_softl+2; i++){
+  area2 = (double**)malloc((amosa->i_softl+2) * sizeof(double*));
+  for(i=0; i<(amosa->i_softl+2); i++){
     area2[i] = (double*)malloc(amosa->i_no_offunc * sizeof(double));
   }
 
@@ -62,9 +62,9 @@ void clustering(AMOSAType* amosa){
   point2 = (int*)malloc((amosa->i_softl+1) * sizeof(int));
   dist = (double *)malloc(amosa->i_softl * sizeof(double));
 
-  distance = (double**)malloc((amosa->i_softl+1) * sizeof(double*));
-  for(i=0; i<amosa->i_softl+1; i++){
-    distance[i] = (double*)malloc((amosa->i_softl+1) * sizeof(double));
+  distance = (double**) malloc((amosa->i_softl+1)*sizeof(double *));
+  for(i=0;i<(amosa->i_softl+1);i++){
+    distance[i]=(double *)malloc((amosa->i_softl+1)*sizeof(double));
   }
 
   flag = (int*)malloc((amosa->i_softl+1) * sizeof(int));
